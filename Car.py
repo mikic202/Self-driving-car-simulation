@@ -4,9 +4,10 @@ import typing
 class Car:
     def __init__(self, position: typing.List[float]) -> None:
         self._position = position
-        self._speed = []
-        self._acceleration = []
-        self._rotation = []
+        self._speed = []  # w ukałdzie odniesienia robota
+        self._acceleration = []  # w ukałdzie odniesienia robota
+        self._rotation = [0, 0, 0]
+        self._angular_velocity = float  # w ukałdzie odniesienia robota
 
     def set_position(self, position: typing.List[float]) -> None:
         self._position = position
@@ -31,3 +32,9 @@ class Car:
 
     def rotation(self) -> typing.List[float]:
         return self._rotation
+
+    def set_angular_velocity(self, angular_velocity: float) -> None:
+        self._angular_velocity = angular_velocity
+
+    def angular_velocity(self) -> float:
+        return self._angular_velocity
