@@ -12,8 +12,10 @@ METER_TO_PIXEL_RATIO = 15
 class Visualization:
     def __init__(self) -> None:
         self._WIN = pygame.display.set_mode((600, 600))
-        self._car = DifferentialDriveCar([10, 10, 0], 2.0, 6.0)
-        self.image = pygame.image.load('abc.png')
+        self._car = DifferentialDriveCar([10, 10, 0], 2.0, 12.0)
+        self._image = pygame.image.load('abc.png')
+        self._image = pygame.transform.scale(self._image, (self._image.get_size()[0]*self._car.wheel_distance()*METER_TO_PIXEL_RATIO/self._image.get_size()[1], self._image.get_size()[1]*self._car.wheel_distance()*METER_TO_PIXEL_RATIO/self._image.get_size()[1]))
+
         self._draw_diagnostocs = False
         self._last_car_update = time()
         pygame.init()
@@ -60,8 +62,8 @@ class Visualization:
             pygame.draw.circle(self._WIN, DIAGNOSTIC_CIRCLE_COLOR, (self._car.position()[0]*METER_TO_PIXEL_RATIO, self._car.position()[1]*METER_TO_PIXEL_RATIO), self._car.wheel_distance()/2*METER_TO_PIXEL_RATIO)
 
     def _draw_car(self):
-        w, h = self.image.get_size()
-        self.rotate_car(self.image, (self._car.position()[0]*METER_TO_PIXEL_RATIO, self._car.position()[1]*METER_TO_PIXEL_RATIO), (w/2, h/2), -(self._car.rotation()[2]/(2 * pi)*360) % 360)
+        w, h = self._image.get_size()
+        self.rotate_car(self._image, (self._car.position()[0]*METER_TO_PIXEL_RATIO, self._car.position()[1]*METER_TO_PIXEL_RATIO), (w/2, h/2), -(self._car.rotation()[2]/(2 * pi)*360) % 360)
 
     def rotate_car(self, image, pos, originPos, angle):
 
