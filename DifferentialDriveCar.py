@@ -9,7 +9,7 @@ class DifferentialDriveCar(Car):
         self._wheel_rotation_speed = {"right": 0.0, "left": 0.0}  # w układzie odniesienia robota
         self._wheel_speed = {"right": 0.0, "left": 0.0}  # w układzie odniesienia robota
         self._wheel_diametre = wheel_diametre
-        self._instantaneous_center_of_rotation = 0  # w układzie odniesienia robota
+        self._instantaneous_center_of_rotation = inf  # w układzie odniesienia robota
         self._wheel_distance = wheel_distance
 
     def wheel_rotation_speed(self) -> typing.Dict[str, float]:
@@ -25,10 +25,9 @@ class DifferentialDriveCar(Car):
         fix = (dp + dl)/2
         fifi = (dp - dl)/self._wheel_distance
         if fifi == 0:
-            d = fix
+            self._instantaneous_center_of_rotation = inf
         else:
-            d = 2 * fix/fifi*sin(fifi/2)
-            R = fix/fifi
+            self._instantaneous_center_of_rotation = fix/fifi
         self._position[0] += fix*cos(self._rotation[2] + fifi/2)
         self._position[1] += fix*sin(self._rotation[2] + fifi/2)
         self._rotation[2] += fifi
@@ -39,3 +38,6 @@ class DifferentialDriveCar(Car):
 
     def wheel_distance(self) -> int:
         return self._wheel_distance
+
+    def instantaneous_center_of_rotation(self) -> int:
+        return self._instantaneous_center_of_rotation
