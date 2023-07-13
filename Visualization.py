@@ -4,6 +4,7 @@ from math import pi
 from DifferentialDriveCar import DifferentialDriveCar
 from time import time
 from typing import List
+from Gate import Gate
 
 BACKGROUND_COLOR = (230, 230, 230)
 DIAGNOSTIC_CIRCLE_COLOR = (220, 220, 220)
@@ -52,12 +53,13 @@ class Visualization:
         self._draw_diagnostocs = False
         self._last_car_update = time()
         self._init_robots()
+        self._line = Gate((190, 290), (290, 400))
         pygame.init()
         self._start()
 
     def _init_robots(self):
         for i in range(0, CAR_NUMBER):
-            self._robots.append(PygameCarObject(DifferentialDriveCar([10, 10, 0], 2.0, 12.0)))
+            self._robots.append(PygameCarObject(DifferentialDriveCar([10, 10, 0], 2.0, 5.0)))
 
     def _start(self) -> None:
         while True:
@@ -66,6 +68,10 @@ class Visualization:
             self.move_robots()
             self._WIN.fill(BACKGROUND_COLOR)
             self._draw_cars()
+            self._line.draw_line(self._WIN)
+            if(self._line.check_robot_colision(self._robots[self._controled_car]._car)):
+                print(33333333)
+            print("2222222222222")
             pygame.display.flip()
 
     def _check_keystrokes(self):
