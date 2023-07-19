@@ -5,6 +5,8 @@ from DifferentialDriveCar import DifferentialDriveCar
 from time import time
 from typing import List
 from Gate import Gate
+import json
+from Line import Line
 
 BACKGROUND_COLOR = (230, 230, 230)
 DIAGNOSTIC_CIRCLE_COLOR = (220, 220, 220)
@@ -44,6 +46,9 @@ class PygameCarObject:
 
 class Visualization:
     def __init__(self) -> None:
+        self._track = []
+        self._gates = []
+        self._start_point = None
         self._WIN = pygame.display.set_mode((600, 600))
         self._robots = []  # type: List[PygameCarObject]
         # self._car = DifferentialDriveCar([10, 10, 0], 2.0, 12.0)
@@ -54,12 +59,22 @@ class Visualization:
         self._last_car_update = time()
         self._init_robots()
         self._line = Gate((190, 290), (290, 400))
+        self._load_track()
         pygame.init()
         self._start()
 
     def _init_robots(self):
         for i in range(0, CAR_NUMBER):
             self._robots.append(PygameCarObject(DifferentialDriveCar([10, 10, 0], 2.0, 5.0)))
+
+    def _load_track(self):
+        with open('track.json', 'r') as f:
+            data = json.load(f)
+            for line in data["track"]:
+                self._track.append(Line(line["start"], line["end"]))
+            for gate in data["gates"]:
+                self._gates.append(Line(gate["start"], gate["end"]))
+            self._start_point = data["start point"]
 
     def _start(self) -> None:
         while True:
@@ -70,8 +85,7 @@ class Visualization:
             self._draw_cars()
             self._line.draw_line(self._WIN)
             if(self._line.check_robot_colision(self._robots[self._controled_car]._car)):
-                print(33333333)
-            print("2222222222222")
+                pass
             pygame.display.flip()
 
     def _check_keystrokes(self):
