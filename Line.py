@@ -7,10 +7,12 @@ METER_TO_PIXEL_RATIO = 15
 
 class Line:
     def __init__(self, start: int, end: int) -> None:
-        self._start = start
-        self._end = end
+        self._start = start if start[1] < end[1] else end
+        self._end = end if start[1] < end[1] else start
         self._a = (start[1] - end[1])/(start[0] - end[0])
         self._b = start[1] - self._a*start[0]
+        print(self._start)
+        print(self._end)
 
     def draw_line(self, win: pygame.display) -> None:
         pygame.draw.line(win, (0, 0, 0), self._start, self._end)
