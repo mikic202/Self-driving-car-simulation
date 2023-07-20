@@ -13,6 +13,9 @@ DIAGNOSTIC_CIRCLE_COLOR = (220, 220, 220)
 METER_TO_PIXEL_RATIO = 15
 CAR_NUMBER = 10
 
+# 979 624
+# 948 630
+
 
 class PygameCarObject:
     def __init__(self, car: DifferentialDriveCar) -> None:
@@ -46,10 +49,10 @@ class PygameCarObject:
 
 class Visualization:
     def __init__(self) -> None:
-        self._track = []
-        self._gates = []
-        self._start_point = None
-        self._WIN = pygame.display.set_mode((600, 600))
+        self._track = []  # type: List[Line]
+        self._gates = []  # type: List[Gate]
+        self._start_point = [700, 700]
+        self._WIN = pygame.display.set_mode((1200, 800))
         self._robots = []  # type: List[PygameCarObject]
         # self._car = DifferentialDriveCar([10, 10, 0], 2.0, 12.0)
         # self._image = pygame.image.load('abc.png')
@@ -57,36 +60,54 @@ class Visualization:
         self._controled_car = 0
         self._draw_diagnostocs = False
         self._last_car_update = time()
+        # self._load_track()
         self._init_robots()
-        self._line = Gate((190, 290), (290, 400))
-        self._load_track()
+        self._line = Line((979, 624), (948, 630))
         pygame.init()
         self._start()
 
     def _init_robots(self):
         for i in range(0, CAR_NUMBER):
-            self._robots.append(PygameCarObject(DifferentialDriveCar([10, 10, 0], 2.0, 5.0)))
+            self._robots.append(PygameCarObject(DifferentialDriveCar([self._start_point[0]//METER_TO_PIXEL_RATIO, self._start_point[1]//METER_TO_PIXEL_RATIO, 0], 2.0, 5.0)))
 
     def _load_track(self):
-        with open('track.json', 'r') as f:
+        with open('example_track.json', 'r') as f:
             data = json.load(f)
             for line in data["track"]:
                 self._track.append(Line(line["start"], line["end"]))
             for gate in data["gates"]:
-                self._gates.append(Line(gate["start"], gate["end"]))
+                self._gates.append(Gate(gate["start"], gate["end"]))
             self._start_point = data["start point"]
+
+    def _draw_track(self):
+        for line in self._track:
+            line.draw_line(self._WIN)
+        for gate in self._gates:
+            gate.draw_line(self._WIN)
 
     def _start(self) -> None:
         while True:
             self._check_events()
             self._check_keystrokes()
             self.move_robots()
+            self._check_lines()
             self._WIN.fill(BACKGROUND_COLOR)
             self._draw_cars()
+            self._draw_track()
             self._line.draw_line(self._WIN)
             if(self._line.check_robot_colision(self._robots[self._controled_car]._car)):
-                pass
+                print("aaaaaaaaaa")
+            print("bbbbbbbbbb")
             pygame.display.flip()
+
+    def _check_lines(self):
+        for line in self._track:
+            if(line.check_robot_colision(self._robots[self._controled_car]._car)):
+                line._line_colour = [255, 0, 0]
+                print(line._start)
+                print(line._end)
+            else:
+                line._line_colour = [0, 0, 0]
 
     def _check_keystrokes(self):
         keys_press = pygame.key.get_pressed()
