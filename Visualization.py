@@ -60,7 +60,7 @@ class Visualization:
         self._controled_car = 0
         self._draw_diagnostocs = False
         self._last_car_update = time()
-        # self._load_track()
+        self._load_track()
         self._init_robots()
         self._line = Line((979, 624), (948, 630))
         pygame.init()
@@ -108,6 +108,12 @@ class Visualization:
                 print(line._end)
             else:
                 line._line_colour = [0, 0, 0]
+
+        for gate in self._gates:
+            if gate.check_robot_colision(self._robots[self._controled_car]._car):
+                gate._line_colour = [255, 0, 0]
+            else:
+                gate._line_colour = [60, 255, 60]
 
     def _check_keystrokes(self):
         keys_press = pygame.key.get_pressed()
