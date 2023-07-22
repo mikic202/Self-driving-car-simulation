@@ -8,8 +8,8 @@ METER_TO_PIXEL_RATIO = 15
 class Line:
     def __init__(self, start: int, end: int) -> None:
         self._line_colour = (0, 0, 0)
-        self._start = start if start[1] < end[1] else end
-        self._end = end if start[1] < end[1] else start
+        self._start = start if start[0] < end[0] else end
+        self._end = end if start[0] < end[0] else start
         self._is_diagonal = False
         if start[0] - end[0] == 0:
             self._is_diagonal = True
@@ -29,6 +29,8 @@ class Line:
             return self._start[0] <= cpt[0] + r and self._start[0] >= cpt[0] - r
 
         if self._a == 0:
+            if cpt[0] <= self._end[0] + r and cpt[0] >= self._start[0] - r and abs(self._end[1]-cpt[1]) <= r:
+                return True
             return False
 
         perpendicular_a = -1/self._a
@@ -40,9 +42,10 @@ class Line:
         distance = math.sqrt(dx*dx + dy*dy)
         if distance > r:
             return False
-        if ((self._start[0] > cpt[0] and self._start[1] > cpt[1]) or (self._start[0] < cpt[0] and self._start[1] > cpt[1])) and math.sqrt((self._start[0]-cpt[0])**2 + (self._start[1]-cpt[1])**2) > r:
-            return False
-        if ((self._end[0] < cpt[0] and self._end[1] < cpt[1]) or (self._end[0] > cpt[0] and self._end[1] < cpt[1])) and math.sqrt((self._end[0]-cpt[0])**2 + (self._end[1]-cpt[1])**2) > r:
-            return False
+        if intersection_ponit_x > self._end[0] and intersection_ponit_x > self._start[0] and math.sqrt((self._end[0]-cpt[0])**2 + (self._end[1]-cpt[1])**2) > r:
+             return False
+        if intersection_ponit_x < self._end[0] and intersection_ponit_x < self._start[0] and math.sqrt((self._start[0]-cpt[0])**2 + (self._start[1]-cpt[1])**2) > r:
+             return False
         print("wtf")
+        print(cpt)
         return True
