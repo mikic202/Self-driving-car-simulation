@@ -1,9 +1,7 @@
 import pygame
 import json
 import argparse
-
-LINE_START = "start"
-LINE_END = "end"
+from TrackConstants import TrackConstants
 
 window = pygame.display.set_mode((1200, 800))
 r = 5
@@ -34,7 +32,7 @@ class LineCreator:
         self._line_being_drawn = True
 
     def _end_line(self, line_end):
-        self._lines_drawn.append({LINE_START: self._curent_lines_start, LINE_END: line_end})
+        self._lines_drawn.append({TrackConstants.LINE_START.value: self._curent_lines_start, TrackConstants.LINE_END.value: line_end})
         self._line_being_drawn = False
         self._curent_lines_start = ()
 
@@ -53,7 +51,7 @@ class LineCreator:
         if self._line_being_drawn:
             return
         if self._gate_being_drawn:
-            self._gates_drawn.append({LINE_START: self._curent_gate_start, LINE_END: line_point})
+            self._gates_drawn.append({TrackConstants.LINE_START.value: self._curent_gate_start, TrackConstants.LINE_END.value: line_point})
             self._gate_being_drawn = False
             self._curent_gate_start = ()
         else:
@@ -62,12 +60,12 @@ class LineCreator:
 
     def draw_track(self, window, mouse_pos):
         for line in self._lines_drawn:
-            pygame.draw.line(window, "white", line[LINE_START], line[LINE_END])
+            pygame.draw.line(window, "white", line[TrackConstants.LINE_START.value], line[TrackConstants.LINE_END.value])
         if self._line_being_drawn:
             pygame.draw.line(window, "white", self._curent_lines_start, mouse_pos)
 
         for gate in self._gates_drawn:
-            pygame.draw.line(window, "green", gate[LINE_START], gate[LINE_END])
+            pygame.draw.line(window, "green", gate[TrackConstants.LINE_START.value], gate[TrackConstants.LINE_END.value])
         if self._gate_being_drawn:
             pygame.draw.line(window, "green", self._curent_gate_start, mouse_pos)
 

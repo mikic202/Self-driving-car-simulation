@@ -7,6 +7,7 @@ from typing import List
 from Gate import Gate
 import json
 from Line import Line
+from TrackConstants import TrackConstants
 
 BACKGROUND_COLOR = (230, 230, 230)
 DIAGNOSTIC_CIRCLE_COLOR = (220, 220, 220)
@@ -18,7 +19,8 @@ CAR_NUMBER = 10
 
 
 class PygameCarObject:
-    def __init__(self, car: DifferentialDriveCar) -> None:
+    def __init__(self, car: DifferentialDriveCar, robot_number: int) -> None:
+        self._robot_number = robot_number
         self._car = car
         self._image = pygame.image.load('abc.png')
         self._image = pygame.transform.scale(self._image, (self._image.get_size()[0]*self._car.wheel_distance()*METER_TO_PIXEL_RATIO/self._image.get_size()[1], self._image.get_size()[1]*self._car.wheel_distance()*METER_TO_PIXEL_RATIO/self._image.get_size()[1]))
@@ -51,32 +53,28 @@ class Visualization:
     def __init__(self) -> None:
         self._track = []  # type: List[Line]
         self._gates = []  # type: List[Gate]
+        self._robots = []  # type: List[PygameCarObject]
         self._start_point = [700, 700]
         self._WIN = pygame.display.set_mode((1200, 800))
-        self._robots = []  # type: List[PygameCarObject]
-        # self._car = DifferentialDriveCar([10, 10, 0], 2.0, 12.0)
-        # self._image = pygame.image.load('abc.png')
-        # self._image = pygame.transform.scale(self._image, (self._image.get_size()[0]*self._car.wheel_distance()*METER_TO_PIXEL_RATIO/self._image.get_size()[1], self._image.get_size()[1]*self._car.wheel_distance()*METER_TO_PIXEL_RATIO/self._image.get_size()[1]))
         self._controled_car = 0
         self._draw_diagnostocs = False
         self._last_car_update = time()
         self._load_track()
         self._init_robots()
-        self._line = Line((979, 624), (948, 630))
         pygame.init()
         self._start()
 
     def _init_robots(self):
         for i in range(0, CAR_NUMBER):
-            self._robots.append(PygameCarObject(DifferentialDriveCar([self._start_point[0]//METER_TO_PIXEL_RATIO, self._start_point[1]//METER_TO_PIXEL_RATIO, 0], 2.0, 5.0)))
+            self._robots.append(PygameCarObject(DifferentialDriveCar([self._start_point[0]//METER_TO_PIXEL_RATIO, self._start_point[1]//METER_TO_PIXEL_RATIO, 0], 2.0, 5.0), i))
 
     def _load_track(self):
         with open('example_track.json', 'r') as f:
             data = json.load(f)
             for line in data["track"]:
-                self._track.append(Line(line["start"], line["end"]))
+                self._track.append(Line(line[TrackConstants.LINE_START.value], line[TrackConstants.LINE_END.value]))
             for gate in data["gates"]:
-                self._gates.append(Gate(gate["start"], gate["end"]))
+                self._gates.append(Gate(gate[TrackConstants.LINE_START.value], gate[TrackConstants.LINE_END.value]))
             self._start_point = data["start point"]
 
     def _draw_track(self):
@@ -94,10 +92,6 @@ class Visualization:
             self._WIN.fill(BACKGROUND_COLOR)
             self._draw_cars()
             self._draw_track()
-            self._line.draw_line(self._WIN)
-            if(self._line.check_robot_colision(self._robots[self._controled_car]._car)):
-                print("aaaaaaaaaa")
-            print("bbbbbbbbbb")
             pygame.display.flip()
 
     def _check_lines(self):
