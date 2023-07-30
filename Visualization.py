@@ -8,25 +8,22 @@ from Gate import Gate
 import json
 from Line import Line
 from TrackConstants import TrackConstants
+import argparse
 
 BACKGROUND_COLOR = (230, 230, 230)
 DIAGNOSTIC_CIRCLE_COLOR = (220, 220, 220)
 METER_TO_PIXEL_RATIO = 15
 CAR_NUMBER = 10
 
-# 979 624
-# 948 630
-
-
 class PygameCarObject:
-    def __init__(self, car: DifferentialDriveCar, robot_number: int) -> None:
+    def __init__(self, car: DifferentialDriveCar, robot_number: int, image_path: str) -> None:
         self._robot_number = robot_number
         self._car = car
-        self._image = pygame.image.load('abc.png')
+        self._image = pygame.image.load(image_path)
         self._image = pygame.transform.scale(self._image, (self._image.get_size()[0]*self._car.wheel_distance()*METER_TO_PIXEL_RATIO/self._image.get_size()[1], self._image.get_size()[1]*self._car.wheel_distance()*METER_TO_PIXEL_RATIO/self._image.get_size()[1]))
         self._last_update = time()
 
-    def draw_car(self, window, draw_diagnostics):
+    def draw_car(self, window, draw_diagnostics: bool):
         w, h = self._image.get_size()
         self._draw_diagnostics(window, draw_diagnostics)
         self._rotate_car(window, self._image, (self._car.position()[0]*METER_TO_PIXEL_RATIO, self._car.position()[1]*METER_TO_PIXEL_RATIO), (w/2, h/2), -(self._car.rotation()[2]/(2 * pi)*360) % 360)
@@ -44,13 +41,15 @@ class PygameCarObject:
 
         window.blit(rotated_image, rotated_image_rect)
 
-    def _draw_diagnostics(self, window, draw_diagnostics):
+    def _draw_diagnostics(self, window, draw_diagnostics: bool):
         if draw_diagnostics:
             pygame.draw.circle(window, DIAGNOSTIC_CIRCLE_COLOR, (self._car.position()[0]*METER_TO_PIXEL_RATIO, self._car.position()[1]*METER_TO_PIXEL_RATIO), self._car.wheel_distance()/2*METER_TO_PIXEL_RATIO)
 
 
 class Visualization:
-    def __init__(self) -> None:
+    def __init__(self, track_path: str, robot_image_path: str) -> None:
+        self._track_path = track_path
+        self._robot_image_path = robot_image_path
         self._track = []  # type: List[Line]
         self._gates = []  # type: List[Gate]
         self._robots = []  # type: List[PygameCarObject]
@@ -66,10 +65,10 @@ class Visualization:
 
     def _init_robots(self):
         for i in range(0, CAR_NUMBER):
-            self._robots.append(PygameCarObject(DifferentialDriveCar([self._start_point[0]//METER_TO_PIXEL_RATIO, self._start_point[1]//METER_TO_PIXEL_RATIO, 0], 2.0, 5.0), i))
+            self._robots.append(PygameCarObject(DifferentialDriveCar([self._start_point[0]//METER_TO_PIXEL_RATIO, self._start_point[1]//METER_TO_PIXEL_RATIO, 0], 2.0, 5.0), i, self._robot_image_path))
 
     def _load_track(self):
-        with open('example_track.json', 'r') as f:
+        with open(f'{self._track_path}.json', 'r') as f:
             data = json.load(f)
             for line in data["track"]:
                 self._track.append(Line(line[TrackConstants.LINE_START.value], line[TrackConstants.LINE_END.value]))
@@ -98,8 +97,6 @@ class Visualization:
         for line in self._track:
             if(line.check_robot_colision(self._robots[self._controled_car]._car)):
                 line._line_colour = [255, 0, 0]
-                print(line._start)
-                print(line._end)
             else:
                 line._line_colour = [0, 0, 0]
 
@@ -146,5 +143,8 @@ class Visualization:
 
 
 if __name__ == "__main__":
-    # threading.Thread(target=Visualization())
-    win = Visualization()
+    parser = argparse.ArgumentParser("TrackCreator")
+    parser.add_argument("-t", "--track", type=str, default="example_track", help="track file destination (without extension)")
+    parser.add_argument("-r", "--robot", type=str, default="abc.png", help="robot image destination")
+    args = parser.parse_args()
+    win = Visualization(args.track, args.robot)

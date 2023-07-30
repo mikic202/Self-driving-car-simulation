@@ -46,6 +46,4 @@ class Line:
              return False
         if intersection_ponit_x < self._end[0] and intersection_ponit_x < self._start[0] and math.sqrt((self._start[0]-cpt[0])**2 + (self._start[1]-cpt[1])**2) > r:
              return False
-        print("wtf")
-        print(cpt)
         return True
