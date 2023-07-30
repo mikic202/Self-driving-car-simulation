@@ -2,14 +2,13 @@ import pygame
 import json
 import argparse
 from TrackConstants import TrackConstants
+from typing import List
 
 window = pygame.display.set_mode((1200, 800))
-r = 5
+curcor_radious = 5
 
 clock = pygame.time.Clock()
-draw_new_line = False
 run = True
-line_start = [0, 0]
 
 parser = argparse.ArgumentParser("TrackCreator")
 parser.add_argument("-f", "--file", type=str, default="track", help="defines output file name (without extension)")
@@ -27,19 +26,19 @@ class LineCreator:
         self._output_file = output_file
         self._start_point = None
 
-    def _start_line(self, new_line_start: list()):
+    def _start_line(self, new_line_start: List[int]):
         self._curent_lines_start = new_line_start
         self._line_being_drawn = True
 
-    def _end_line(self, line_end):
+    def _end_line(self, line_end: List[int]):
         self._lines_drawn.append({TrackConstants.LINE_START.value: self._curent_lines_start, TrackConstants.LINE_END.value: line_end})
         self._line_being_drawn = False
         self._curent_lines_start = ()
 
-    def add_start_point(self, start_point: list()):
+    def add_start_point(self, start_point: List[int]):
         self._start_point = start_point
 
-    def add_line_point(self, new_line_pos: list()):
+    def add_line_point(self, new_line_pos: List[int]):
         if self._gate_being_drawn:
             return
         if self._line_being_drawn:
@@ -47,7 +46,7 @@ class LineCreator:
         else:
             self._start_line(new_line_pos)
 
-    def add_gate(self, line_point: list()):
+    def add_gate(self, line_point: List[int]):
         if self._line_being_drawn:
             return
         if self._gate_being_drawn:
@@ -58,7 +57,7 @@ class LineCreator:
             self._curent_gate_start = line_point
             self._gate_being_drawn = True
 
-    def draw_track(self, window, mouse_pos):
+    def draw_track(self, window, mouse_pos: List[int]):
         for line in self._lines_drawn:
             pygame.draw.line(window, "white", line[TrackConstants.LINE_START.value], line[TrackConstants.LINE_END.value])
         if self._line_being_drawn:
@@ -74,7 +73,7 @@ class LineCreator:
 
     def write_track_to_json(self):
         with open(self._output_file + ".json", "w") as outfile:
-            json.dump({"track": self._lines_drawn, "start point": self._start_point, "gates": self._gates_drawn}, outfile)
+            json.dump({TrackConstants.TRACK.value: self._lines_drawn, TrackConstants.START_POINT.value: self._start_point, TrackConstants.GATES.value: self._gates_drawn}, outfile)
 
 
 test = LineCreator(args.file)
@@ -98,7 +97,7 @@ while run:
 
     window.fill("black")
     test.draw_track(window, cpt)
-    pygame.draw.circle(window, "white", cpt, r, 3)
+    pygame.draw.circle(window, "white", cpt, curcor_radious, 3)
     pygame.display.flip()
 
 pygame.quit()

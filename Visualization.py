@@ -70,11 +70,11 @@ class Visualization:
     def _load_track(self):
         with open(f'{self._track_path}.json', 'r') as f:
             data = json.load(f)
-            for line in data["track"]:
+            for line in data[TrackConstants.TRACK.value]:
                 self._track.append(Line(line[TrackConstants.LINE_START.value], line[TrackConstants.LINE_END.value]))
-            for gate in data["gates"]:
+            for gate in data[TrackConstants.GATES.value]:
                 self._gates.append(Gate(gate[TrackConstants.LINE_START.value], gate[TrackConstants.LINE_END.value]))
-            self._start_point = data["start point"]
+            self._start_point = data[TrackConstants.START_POINT.value]
 
     def _draw_track(self):
         for line in self._track:
