@@ -86,7 +86,7 @@ class Visualization:
         while True:
             self._check_events()
             self._check_keystrokes()
-            self.move_robots()
+            self._move_robots()
             self._check_lines()
             self._WIN.fill(BACKGROUND_COLOR)
             self._draw_cars()
@@ -121,7 +121,7 @@ class Visualization:
         elif keys_press[pygame.K_s]:
             self._draw_diagnostocs = False
 
-    def move_robots(self):
+    def _move_robots(self):
         for robot in self._robots:
             current_time = time()
             robot._car.move_robot_for(current_time - robot._last_update)
