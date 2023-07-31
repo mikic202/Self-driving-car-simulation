@@ -21,9 +21,9 @@ class Line:
         pygame.draw.line(win, self._line_colour, self._start, self._end)
 
     def check_robot_colision(self, robot: DifferentialDriveCar) -> bool:
-        return self.interectLineCircle((robot.position()[0]*METER_TO_PIXEL_RATIO, robot.position()[1]*METER_TO_PIXEL_RATIO), robot.wheel_distance()/2*METER_TO_PIXEL_RATIO)
+        return self._interect_line_circle((robot.position()[0]*METER_TO_PIXEL_RATIO, robot.position()[1]*METER_TO_PIXEL_RATIO), robot.wheel_distance()/2*METER_TO_PIXEL_RATIO)
 
-    def interectLineCircle(self, cpt, r):
+    def _interect_line_circle(self, cpt, r):
 
         if self._is_diagonal:
             return self._start[0] <= cpt[0] + r and self._start[0] >= cpt[0] - r
