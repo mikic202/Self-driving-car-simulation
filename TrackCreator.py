@@ -72,7 +72,7 @@ class LineCreator:
             pygame.draw.circle(window, (255, 100, 100), self._start_point, 8)
 
     def write_track_to_json(self):
-        with open(self._output_file + ".json", "w") as outfile:
+        with open(self._output_file + TrackConstants.TRACK_EXTENSION.value, "w") as outfile:
             json.dump({TrackConstants.TRACK.value: self._lines_drawn, TrackConstants.START_POINT.value: self._start_point, TrackConstants.GATES.value: self._gates_drawn}, outfile)
 
 

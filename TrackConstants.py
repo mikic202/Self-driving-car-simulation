@@ -7,3 +7,4 @@ class TrackConstants(Enum):
     TRACK = "track"
     START_POINT = "start point"
     GATES = "gates"
+    TRACK_EXTENSION = ".json"

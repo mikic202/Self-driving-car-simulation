@@ -53,7 +53,7 @@ class Visualization:
         self._track = []  # type: List[Line]
         self._gates = []  # type: List[Gate]
         self._robots = []  # type: List[PygameCarObject]
-        self._start_point = [700, 700]
+        self._start_point = [0, 0]
         self._WIN = pygame.display.set_mode((1200, 800))
         self._controled_car = 0
         self._draw_diagnostocs = False
@@ -68,7 +68,7 @@ class Visualization:
             self._robots.append(PygameCarObject(DifferentialDriveCar([self._start_point[0]//METER_TO_PIXEL_RATIO, self._start_point[1]//METER_TO_PIXEL_RATIO, 0], 2.0, 5.0), i, self._robot_image_path))
 
     def _load_track(self):
-        with open(f'{self._track_path}.json', 'r') as f:
+        with open(f'{self._track_path}{TrackConstants.TRACK_EXTENSION.value}', 'r') as f:
             data = json.load(f)
             for line in data[TrackConstants.TRACK.value]:
                 self._track.append(Line(line[TrackConstants.LINE_START.value], line[TrackConstants.LINE_END.value]))
