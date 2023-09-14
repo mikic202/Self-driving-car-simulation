@@ -2,7 +2,6 @@
 This is a simple robot car with differential drive simulator. It is supposed to be used for training tensorflow network. Corently it is in erly development. This repository is also connected to [this repository](https://github.com/mikic202/RobotCar) and neural network trained on this model will be used to steer this real life robot.
 
 ## Table of contents:
-- [Robot Car simulation ](#robot-car-simulation-)
   - [Table of contents:](#table-of-contents)
   - [Required Packages](#required-packages)
   - [How To Start](#how-to-start)
